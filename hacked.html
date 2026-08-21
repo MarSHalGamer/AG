@@ -16,31 +16,30 @@
             align-items: center;
             height: 100vh;
             text-align: center;
+            user-select: none;
         }
         .hacker-bg {
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            opacity: 0.15;
-            pointer-events: none;
-            font-size: 14px;
-            word-wrap: break-word;
+            top: 0; left: 0; width: 100%; height: 100%;
+            opacity: 0.15; pointer-events: none;
+            font-size: 14px; word-wrap: break-word;
         }
         .card {
-            position: relative;
-            z-index: 2;
-            border: 2px solid #00ff00;
-            padding: 40px;
+            position: relative; z-index: 2;
+            border: 2px solid #00ff00; padding: 30px;
             box-shadow: 0 0 20px #00ff00;
-            background: rgba(0, 0, 0, 0.9);
-            max-width: 80%;
+            background: rgba(0, 0, 0, 0.9); max-width: 85%;
         }
-        h1 {
-            font-size: 26px;
-            margin: 0;
-            text-shadow: 0 0 10px #00ff00;
+        h1 { font-size: 22px; margin: 0; text-shadow: 0 0 10px #00ff00; }
+        
+        /* شاشة الموت/الإغلاق الوهمية */
+        .fake-shutdown {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background-color: #000;
+            z-index: 9999;
+            cursor: none;
         }
     </style>
 </head>
@@ -48,7 +47,7 @@
 
     <div class="hacker-bg">
         01001000 01000001 01000011 01001011 01000101 01000100
-        [SYSTEM OVERRIDE] [ACCESS GRANTED] [IP: 192.168.1.1]
+        [CRITICAL_SYSTEM_FAILURE] [OVERRIDE_BOOT]
         01001000 01000001 01000011 01001011 01000101 01000100
     </div>
 
@@ -56,12 +55,24 @@
         <h1>لقد تم تهكيرك عن طريق الهكر عبد القادر احمد بن طرش</h1>
     </div>
 
+    <!-- الشاشة السوداء الوهمية -->
+    <div id="blackScreen" class="fake-shutdown"></div>
+
     <script>
+        // تشغيل الهزاز إذا كان الهاتف يدعمه لإعطاء إيحاء بالتلف
+        if (navigator.vibrate) {
+            navigator.vibrate([200, 100, 200, 100, 500]);
+        }
+
+        // بعد 3 ثوانٍ تظلم الشاشة بالكامل كأن الجهاز انطفأ
         setTimeout(function() {
-            // محاولة إغلاق النافذة
-            window.close();
-            // في حال منع المتصفح الإغلاق المباشر، سيتم توجيهه لصفحة فارغة
-            window.location.href = "about:blank";
+            document.getElementById('blackScreen').style.display = 'block';
+            
+            // محاولة فتح الشاشة الكاملة لزيادة الخدعة
+            let elem = document.documentElement;
+            if (elem.requestFullscreen) {
+                elem.requestFullscreen();
+            }
         }, 3000);
     </script>
 
