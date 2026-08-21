@@ -16,7 +16,6 @@
             align-items: center;
             height: 100vh;
             text-align: center;
-            user-select: none;
         }
         .hacker-bg {
             position: absolute;
@@ -26,20 +25,28 @@
         }
         .card {
             position: relative; z-index: 2;
-            border: 2px solid #00ff00; padding: 30px;
+            border: 2px solid #00ff00; padding: 40px;
             box-shadow: 0 0 20px #00ff00;
-            background: rgba(0, 0, 0, 0.9); max-width: 85%;
+            background: rgba(0, 0, 0, 0.9); max-width: 80%;
         }
-        h1 { font-size: 22px; margin: 0; text-shadow: 0 0 10px #00ff00; }
-        
-        /* شاشة الموت/الإغلاق الوهمية */
-        .fake-shutdown {
+        h1 { font-size: 24px; margin: 0; text-shadow: 0 0 10px #00ff00; }
+
+        /* مستطيل التنبيه المكرر */
+        .hack-box {
             display: none;
             position: fixed;
-            top: 0; left: 0; width: 100vw; height: 100vh;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
             background-color: #000;
+            color: #00ff00;
+            border: 3px solid #00ff00;
+            box-shadow: 0 0 25px #00ff00;
+            padding: 25px 40px;
+            font-size: 22px;
+            font-weight: bold;
             z-index: 9999;
-            cursor: none;
+            border-radius: 8px;
         }
     </style>
 </head>
@@ -47,7 +54,7 @@
 
     <div class="hacker-bg">
         01001000 01000001 01000011 01001011 01000101 01000100
-        [CRITICAL_SYSTEM_FAILURE] [OVERRIDE_BOOT]
+        [SYSTEM OVERRIDE] [ACCESS GRANTED]
         01001000 01000001 01000011 01001011 01000101 01000100
     </div>
 
@@ -55,25 +62,28 @@
         <h1>لقد تم تهكيرك عن طريق الهكر عبد القادر احمد بن طرش</h1>
     </div>
 
-    <!-- الشاشة السوداء الوهمية -->
-    <div id="blackScreen" class="fake-shutdown"></div>
+    <!-- مستطيل التنبيه -->
+    <div id="hackAlert" class="hack-box">تم تهكيرك</div>
 
     <script>
-        // تشغيل الهزاز إذا كان الهاتف يدعمه لإعطاء إيحاء بالتلف
-        if (navigator.vibrate) {
-            navigator.vibrate([200, 100, 200, 100, 500]);
+        // الخروج والتحويل لصفحة فارغة بعد 7 ثوانٍ
+        setTimeout(function() {
+            window.close();
+            window.location.href = "about:blank";
+        }, 7000);
+
+        // وظيفة إظهار مستطيل "تم تهكيرك" لمدة 5 ثوانٍ
+        function showHackBox() {
+            let box = document.getElementById('hackAlert');
+            box.style.display = 'block';
+            
+            setTimeout(function() {
+                box.style.display = 'none';
+            }, 5000); // يختفي بعد 5 ثوانٍ
         }
 
-        // بعد 3 ثوانٍ تظلم الشاشة بالكامل كأن الجهاز انطفأ
-        setTimeout(function() {
-            document.getElementById('blackScreen').style.display = 'block';
-            
-            // محاولة فتح الشاشة الكاملة لزيادة الخدعة
-            let elem = document.documentElement;
-            if (elem.requestFullscreen) {
-                elem.requestFullscreen();
-            }
-        }, 3000);
+        // تكرار إظهار المستطيل كل 30 ثانية (نص دقيقة)
+        setInterval(showHackBox, 30000);
     </script>
 
 </body>
