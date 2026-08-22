@@ -3,88 +3,205 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>System Hacked</title>
+    <title>SYSTEM CRITICAL FAILURE</title>
     <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             background-color: #000;
             color: #00ff00;
             font-family: 'Courier New', Courier, monospace;
-            margin: 0;
             overflow: hidden;
+            height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
             text-align: center;
+            animation: glitch-screen 0.2s infinite;
         }
-        .hacker-bg {
+
+        /* خلفية أكواد الماتريكس المتحركة */
+        canvas {
             position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            opacity: 0.15; pointer-events: none;
-            font-size: 14px; word-wrap: break-word;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 1;
+            opacity: 0.35;
         }
+
+        /* صندوق التحذير */
         .card {
-            position: relative; z-index: 2;
-            border: 2px solid #00ff00; padding: 40px;
-            box-shadow: 0 0 20px #00ff00;
-            background: rgba(0, 0, 0, 0.9); max-width: 80%;
+            position: relative;
+            z-index: 2;
+            border: 3px solid #00ff00;
+            padding: 25px;
+            background: rgba(0, 0, 0, 0.92);
+            box-shadow: 0 0 30px #00ff00, inset 0 0 15px #00ff00;
+            max-width: 90%;
+            border-radius: 10px;
+            animation: flash-red 1s infinite alternate;
         }
-        h1 { font-size: 24px; margin: 0; text-shadow: 0 0 10px #00ff00; }
+
+        h1 {
+            font-size: 22px;
+            color: #fff;
+            text-shadow: 0 0 8px #00ff00, 2px 2px #ff0000;
+            margin-bottom: 15px;
+        }
+
+        .status {
+            color: #ff0000;
+            font-weight: bold;
+            font-size: 14px;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+
+        .console-log {
+            font-size: 11px;
+            color: #00ff00;
+            text-align: left;
+            direction: ltr;
+            height: 60px;
+            overflow: hidden;
+            border-top: 1px dashed #00ff00;
+            padding-top: 5px;
+            margin-top: 10px;
+        }
 
         /* مستطيل التنبيه المكرر */
         .hack-box {
             display: none;
             position: fixed;
-            top: 50%;
-            left: 50%;
+            top: 50%; left: 50%;
             transform: translate(-50%, -50%);
             background-color: #000;
-            color: #00ff00;
-            border: 3px solid #00ff00;
-            box-shadow: 0 0 25px #00ff00;
-            padding: 25px 40px;
-            font-size: 22px;
+            color: #ff0000;
+            border: 4px solid #ff0000;
+            box-shadow: 0 0 40px #ff0000;
+            padding: 20px 30px;
+            font-size: 24px;
             font-weight: bold;
             z-index: 9999;
             border-radius: 8px;
+            animation: pulse 0.5s infinite;
+        }
+
+        /* حركة الاهتزاز والجليتش */
+        @keyframes glitch-screen {
+            0% { transform: translate(0, 0); }
+            20% { transform: translate(-2px, 2px); }
+            40% { transform: translate(-2px, -2px); }
+            60% { transform: translate(2px, 2px); }
+            80% { transform: translate(2px, -2px); }
+            100% { transform: translate(0, 0); }
+        }
+
+        @keyframes flash-red {
+            0% { border-color: #00ff00; box-shadow: 0 0 20px #00ff00; }
+            100% { border-color: #ff0000; box-shadow: 0 0 35px #ff0000; }
+        }
+
+        @keyframes pulse {
+            0% { transform: translate(-50%, -50%) scale(1); }
+            50% { transform: translate(-50%, -50%) scale(1.1); }
+            100% { transform: translate(-50%, -50%) scale(1); }
         }
     </style>
 </head>
-<body>
+<body onclick="playBeep()">
 
-    <div class="hacker-bg">
-        01001000 01000001 01000011 01001011 01000101 01000100
-        [SYSTEM OVERRIDE] [ACCESS GRANTED]
-        01001000 01000001 01000011 01001011 01000101 01000100
-    </div>
+    <canvas id="matrix"></canvas>
 
     <div class="card">
+        <div class="status">⚠️ WARNING: SYSTEM COMPROMISED ⚠️</div>
         <h1>لقد تم تهكيرك عن طريق الهكر عبد القادر احمد بن طرش</h1>
+        <div class="console-log" id="log"></div>
     </div>
 
-    <!-- مستطيل التنبيه -->
-    <div id="hackAlert" class="hack-box">تم تهكيرك</div>
+    <div id="hackAlert" class="hack-box">تم تهكيرك !</div>
 
     <script>
-        // الخروج والتحويل لصفحة فارغة بعد 7 ثوانٍ
+        // تأثير مطر الماتريكس
+        const canvas = document.getElementById('matrix');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ#$@%&*';
+        const fontSize = 14;
+        const columns = canvas.width / fontSize;
+        const drops = Array(Math.floor(columns)).fill(1);
+
+        function drawMatrix() {
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#0F0';
+            ctx.font = fontSize + 'px monospace';
+
+            for (let i = 0; i < drops.length; i++) {
+                const text = chars.charAt(Math.floor(Math.random() * chars.length));
+                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                    drops[i] = 0;
+                }
+                drops[i]++;
+            }
+        }
+        setInterval(drawMatrix, 33);
+
+        // سجل السحب الوهمي
+        const logs = [
+            "> Injecting payload...",
+            "> Bypassing Firewall...",
+            "> Accessing Gallery & Photos...",
+            "> Extracting Passwords...",
+            "> Device Control: GRANTED"
+        ];
+        let logIndex = 0;
+        const logContainer = document.getElementById('log');
+        
+        setInterval(() => {
+            if (logIndex < logs.length) {
+                logContainer.innerHTML += logs[logIndex] + "<br>";
+                logIndex++;
+            }
+        }, 1000);
+
+        // صوت صفارة إنذار وهمية
+        function playBeep() {
+            try {
+                let audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                let osc = audioCtx.createOscillator();
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(800, audioCtx.currentTime);
+                osc.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.3);
+            } catch(e){}
+        }
+        window.onload = playBeep;
+
+        // هزاز الجوال
+        if (navigator.vibrate) {
+            navigator.vibrate([300, 100, 300, 100, 500]);
+        }
+
+        // الخروج بعد 7 ثوانٍ
         setTimeout(function() {
             window.close();
             window.location.href = "about:blank";
         }, 7000);
 
-        // وظيفة إظهار مستطيل "تم تهكيرك" لمدة 5 ثوانٍ
+        // إظهار مربع "تم تهكيرك" كل 30 ثانية لمدة 5 ثوانٍ
         function showHackBox() {
             let box = document.getElementById('hackAlert');
             box.style.display = 'block';
-            
+            playBeep();
             setTimeout(function() {
                 box.style.display = 'none';
-            }, 5000); // يختفي بعد 5 ثوانٍ
+            }, 5000);
         }
-
-        // تكرار إظهار المستطيل كل 30 ثانية (نص دقيقة)
         setInterval(showHackBox, 30000);
     </script>
-
 </body>
 </html>
